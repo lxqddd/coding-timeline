@@ -4,7 +4,9 @@
   "description": "code revert ",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/index.ts"
+    "dev": "ts-node ./src/index.ts",
+    "test": "vitest",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
   },
   "homepage": "https://github.com/lxqddd/coding-timeline#readme",
   "devDependencies": {
+    "@types/diff": "^5.0.2",
     "@types/node": "^18.11.8",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
@@ -31,6 +34,10 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "*"
+    "typescript": "*",
+    "vitest": "^0.24.3"
+  },
+  "dependencies": {
+    "diff": "^5.1.0"
   }
 }

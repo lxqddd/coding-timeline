@@ -1,56 +1,50 @@
-// export class CodingTimeline {
-//   private historyList: any[] = []
-//   private pointer: number = 0
+import { createPatch, applyPatch } from 'diff'
 
-//   undo() {
-//     if (this.pointer >= 1) {
-//       this.pointer -= 1
-//       return this.historyList[this.pointer]
-//     }
-//     return this.historyList[0]
-//   }
+export class CodingTimeline {
+  private historyList: string[] = []
+  private redoStack: string[] = []
+  private newData: string = ''
+  private redoValueStack: string[] = []
 
-//   redo() {
-//     if (this.pointer <= this.historyList.length - 2) {
-//       this.pointer += 1
-//       return this.historyList[this.pointer]
-//     }
-//     return this.historyList[this.historyList.length - 1]
-//   }
+  /**
+   * 撤销
+   */
+  undo(): string | boolean {
+    if (this.historyList.length === 0) return false
+    const lastHistory = this.historyList.pop()!
+    this.redoStack.push(lastHistory)
+    this.redoValueStack.push(this.newData)
+    const prevVersion = applyPatch(this.newData, lastHistory)
+    this.newData = prevVersion
+    return this.newData
+  }
 
-//   push(data: any) {
-//     this.historyList.push(data)
-//     this.pointer += 1
-//   }
-// }
+  /**
+   * 撤销之前的撤销
+   */
+  redo(): string | boolean {
+    if (this.redoStack.length === 0) return false
+    this.newData = this.redoValueStack.pop()!
+    this.historyList.push(this.redoStack.pop()!)
+    return this.newData
+  }
 
-import { applyPatch, createPatch, diffChars, diffJson, parsePatch } from 'diff'
+  /**
+   * 每次再保存之前都要push一下，用来记录操作
+   */
+  push(newData: string) {
+    const undoPatch = createPatch('diff', newData, this.newData)
+    this.newData = newData
+    this.historyList.push(undoPatch)
+  }
 
-// const obj1 = {
-//   name: 'xy',
-//   age: 18
-// }
-// const obj2 = {
-//   name: 'ys',
-//   age: 18
-// }
-
-// const ret = diffJson(obj1, obj2)
-
-// const filter = ret.filter(item => (item.removed !== undefined || item.added === true || item.added === undefined))
-// console.log(filter)
-
-
-const str1 = 'hello world'
-const str2 = 'nihao world'
-
-const patches = ['nihao', 'world']
-
-
-
-let ret = ''
-for (let patch of patches) {
-  ret = applyPatch(ret, patch)
+  /**
+   * 当当前页面被关闭的时候调用，用来清楚保存的历史操作
+   */
+  clear() {
+    this.historyList = []
+    this.newData = ''
+    this.redoStack = []
+    this.redoValueStack = []
+  }
 }
-
-console.log(ret)

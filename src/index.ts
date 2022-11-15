@@ -39,6 +39,9 @@ export class CodingTimeline {
    * 每次再保存之前都要push一下，用来记录操作
    */
   push(newData: string) {
+    if (this.undoPatchStack.length !== this.redoPatchStack.length) {
+      this.redoPatchStack.length = this.undoPatchStack.length
+    }
     this.undoPatchStack.push(createPatch('diff', newData, this.newData))
     this.redoPatchStack.push(createPatch('diff', this.newData, newData))
     this.newData = newData
@@ -75,15 +78,15 @@ console.log('d', codingTimeline.redo()) // d
 console.log('d', codingTimeline.redo()) // false
 console.log('b', codingTimeline.undo()) // c
 console.log('b', codingTimeline.undo()) // b
+codingTimeline.push('1111')
+console.log('b', codingTimeline.undo()) // c
 console.log('d', codingTimeline.redo()) // c
 console.log('d', codingTimeline.redo()) // d
 console.log('d', codingTimeline.redo()) // false
 console.log('d', codingTimeline.redo()) // false
-console.log('b', codingTimeline.undo()) // c
 console.log('b', codingTimeline.undo()) // b
 console.log('b', codingTimeline.undo()) // a
 console.log('b', codingTimeline.undo()) // ''
 console.log('b', codingTimeline.undo()) // false
 console.log('b', codingTimeline.undo()) // false
 console.log('b', codingTimeline.undo()) // false
-

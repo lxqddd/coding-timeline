@@ -12,7 +12,7 @@ export class CodingTimeline {
    * 撤销
    */
   undo(): string | boolean {
-    if (this.undoPatchStack.length === 0) return false
+    if (this.undoPatchStack.length === 1) return false
     const lastUndoPatch = this.undoPatchStack.pop()!
     this.undoProduct = applyPatch(this.newData, lastUndoPatch)
     this.point = this.undoPatchStack.length - 1
@@ -24,7 +24,7 @@ export class CodingTimeline {
    * 撤销之前的撤销
    */
   redo(): string | boolean {
-    if (this.redoPatchStack.length === 0 || !this.undoProduct) return false
+    if (this.redoPatchStack.length <= 1 || !this.undoProduct) return false
     this.point += 1
     const redoPatch = this.redoPatchStack[this.point]
     if (!redoPatch) return false
